@@ -6,7 +6,7 @@
 
 # Anonymize BLM Protest Images
 
-This repository automates [@BLMPrivacyBot](https://twitter.com/blmprivacybot), a Twitter bot that anonymizes images to help keep protesters safe. Tweet a picture at [@BLMPrivacyBot](https://twitter.com/blmprivacybot) for an anonymized one back, or use our interface at [blm.stanford.edu](http://blm.stanford.edu).
+This repository automates [@BLMPrivacyBot](https://twitter.com/blmprivacybot), a Twitter bot that shows the anonymized images to help keep protesters safe. Use our interface at [blm.stanford.edu](http://blm.stanford.edu).
 
 
 ### What's happened? Arrests at protests from public images
@@ -29,7 +29,7 @@ Importantly, this application does not save images. We hope the transparency of 
 
 **The bot tweeted my image with the fists on it. Can you take it down?** Yes, absolutely. Please DM the bot or reply directly.
 
-**Can you talk a bit more about your AI technical approach?** We build on state-of-the-art crowd counting AI, because it offers huge advantages to anonymizing crowds over traditional facial recognition models. Traditional methods can only find a few (less than 20 or even less than 5) in a single image. Crowds of BLM protesters can number in the hundreds and thousands, and certainly around 50, in a single image. The model we use in this work has been trained on over 1.2 million people in the open-sourced research dataset, called [QNRF](https://www.crcv.ucf.edu/research/data-sets/ucf-qnrf/), with crowds ranging from the few to the the thousands. False negatives are the worst error in our case.
+**Can you talk a bit more about your AI technical approach?** We build on state-of-the-art crowd counting AI, because it offers huge advantages to anonymizing crowds over traditional facial recognition models. Traditional methods can only find a few (less than 20 or even less than 5) in a single image. Crowds of BLM protesters can number in the hundreds and thousands, and certainly around 50, in a single image. The model we use in this work has been trained on over 1.2 million people in the open-sourced research dataset, called [QNRF](https://www.crcv.ucf.edu/research/data-sets/ucf-qnrf/), with crowds ranging from the few to the the thousands. False negatives are the worst error in our case. The pretrained model weights live in the [LSC-CNN](https://github.com/val-iisc/lsc-cnn) that we build on - precisely, it's in a Google Drive folder linked from their README.
 
 
 
