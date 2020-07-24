@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Get tweets</title>
+	<link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+ <div class="row justify-content-center">
+   <div class="col-md-6">
+     <div class="p-5">
+
+
+	   <form method="GET" action="{{ url_for('test') }}">
+		 <label for="date_since">Start date: </label><br>
+		 <input id="date_since" type="text" name="date_since" multiple><br>
+		 <label for="date_until">End date: </label><br>
+		 <input id="date_until" type="text" name="date_until" multiple><br>
+		 <label for="q">Query:</label><br>
+		 <input id="q" type="text" name="q" multiple><br>
+		 <label for="count">Tweet Count</label><br>
+		 <input  id="count" type="int" name="count" multiple><br>
+		 <label for="save">Do you want to save images?</label><br>
+		 <input  id="save" type="checkbox" name="save_image" multiple><br>
+		   <br>
+	     <input type="submit" value="Send">
+       </form>
+
+
+
+     </div>
+	  {% for tweet in tweets %}
+	  <div class="card mt-2">
+	    <div class="card-body">
+	      <div class="card-text">
+			  {{ tweet.full_text }}
+			  <br>
+			  {% for media in tweet.extended_entities['media']%}
+
+			  	<img src={{media['media_url']}} alt="lol" width="500" height="600">
+			  	<br>
+			  {% endfor %}
+	      </div>
+		</div>
+	  </div>
+	  {% endfor %}
+       </div>
+   </div>
+ </div>
+</body>
+</html>

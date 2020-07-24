@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block body %}
+    <div id="banner"></div>
+    <h1>Anonymize photos to protect BLM protesters</h1></br>
+    
+    <div id="drop-area">
+      <form method="POST" class="my-form" enctype="multipart/form-data" action="/model" id='imagecollector'>
+        <p>Upload or drop your image here</p>
+        <input type="file" id="fileElem" name="inputimage" id="inputimage" accept=".png, .jpg, .jpeg" onchange="handleFiles(this.files)" >
+
+        <div id="gallery"></div>
+        <div id="getfiles">
+            <label class="button" for="fileElem" >Select an image</label>
+        </div>
+      </form>
+
+    </div>
+
+    <div style='display: none' id = 'anonymize'>
+        <p id='statustext'>Processing (give me a minute!)</p>
+        <p id='statustext2'>Feel free to read the site below &#128516</p>
+        <br>
+        <br>
+        <img src="https://media.giphy.com/media/12iaTlvi32M9HO/giphy.gif" width="10%" id="output">
+    </div>
+
+    <br>
+    <br>
+    <br>
+    <br>
+    <div class='text-area'>
+            <div class='headline'>More examples from <a href='https://twitter.com/BLMPrivacyBot'>@BLMPrivacyBot</a>. This tool is free and <a href='https://github.com/stanfordmlgroup/blm'>open source</a>. </div>
+            <br>
+            <div style="text-align:center;">
+            <a href='https://twitter.com/BLMPrivacyBot' ><img width='80%' src='/static/img/tweet.png'></a>
+            </div>
+        <hr>
+        <div class='headline'>Arrests from public protest images discourages protests.</div>
+        Over the past weeks, we have seen an increasing number of <i>arrests at BLM protests</i>, with images circulating around the web enabling automatic identification of those individuals and subsequent arrests to hamper protest activity. This primarily concerns social media protest images, e.g. 15 Twitter posts from President Donald Trump on June 27, 2020.
+        <br>
+        <br>
+        Numerous applications have emerged in response to this threat that aim to anonymize protest images and enable people to continue protesting in safety. Of course, this would require a shift on the public's part to recognize this issue and an easy and effective method for anonymization to surface. In an ideal world, platforms like Twitter would enable an on-platform solution.
+
+        Unfortunately, to beat facial recognition, <i>blurring faces is not enough</i>.
+
+
+        <div class='headline'>So what's your goal? AI to help alleviate some of the worst parts of AI...</div>
+        The goal of this work is to leverage our group's knowledge of facial recognition AI to offer the most effective anonymization tool, which evades state of the art facial recognition technology. 
+        <br>
+        <br>
+
+        <div class='headline'>Some technical considerations</div>
+
+        <a href="https://www.wired.com/2016/09/machine-learning-can-identify-pixelated-faces-researchers-show/">AI facial recognition models <i>can</i> recognize blurred faces</a>. This work tries to discourage people from trying to recognize or reconstruct pixelated faces by masking people with an opaque mask. We use the BLM fist emoji as that mask for solidarity. While posting anonymized images does not delete the originals, we are starting with awareness and hope Twitter and other platforms would offer an on-platform solution (might be a tall order, but one can hope).
+        <br>
+        <br>
+        Importantly, this application does not save images. We hope the transparency of this open source repository will allow for community input. The Twitter bot posts anonymized images based on the Fair Use policy; however, if your image is used and you'd like it to be taken down, we will do our best to do so immediately.
+
+
+        <div class='headline'>Limits of facial recognition</div>
+
+        Past research has demonstrated that facial recognition technologies are baised. When <a href='http://gendershades.org'>3 commercial facial recognition technologies were examined for bias</a>, researchers found that darker-skinned females were the most misclassified group (with error rates of up to 34.7%), while the maximum error rate for lighter-skinned males is 0.8%. The <a href='https://www.aclu.org/blog/privacy-technology/surveillance-technologies/amazons-face-recognition-falsely-matched-28'>ACLU also tested Amazon's facial recognition software</a>, and found that the software incorrectly recognized 28 members of Congress as other people who have been arrested. More recently, <a href='https://www.theverge.com/2020/7/17/21328287/face-masks-facial-recognition-privacy-security-protests'>Homeland Security appears worried</a> that facial recognition algorithms will have error rates on people wearing masks.
+        <br>
+        <br>
+        
+        So, sometimes facial recognition is bad at identifying people...isn't that a good thing? Unfortunately, the use of facial recognition by police and the government is <a href='https://www.perpetuallineup.org'>largely unregulated in America</a>, and people have been wrongfully arrested for crimes they didn't commit <a href=https://www.aclu.org/news/privacy-technology/wrongfully-arrested-because-face-recognition-cant-tell-black-people-apart>because of incorrect facial recognition matches</a>. 
+
+
+        <div class='headline'>FAQ</div>
+
+        <b>How can AI models still recognize blurred faces, even if they cannot reconstruct them perfectly?</b> 
+        Recognition is different from reconstruction. Facial recognition technology can still identify many blurred faces and is better than humans at it. <i>Reconstruction</i> is a much more arduous task (see the difference between discriminative and generative models, if you're curious). Reconstruction has recently been exposed to be very biased (see lessons from <a href='https://thegradient.pub/pulse-lessons/'>PULSE</a>). 
+        <br>
+        <br>
+        Blurring faces has the added threat of encouraging certain people or groups to de-anonymize images through reconstruction or directly identifying individuals through recognition.
+        
+        <br>
+        <br>
+        
+        <b>Do you save any images?</b> No.
+        
+        <br>
+        <br>
+
+        <b>The bot tweeted my image with the BLM fist emoji on it. Can you take it down?</b>
+        Yes, absolutely. Please DM the bot or reply directly.
+        
+        <br>
+        <br>
+        <b>Can you talk a bit more about your AI technical approach?</b> Yes! The open-source repo is <a href='https://github.com/StanfordMLGroup/blm'>here</a>. We build on state-of-the-art crowd counting AI, because it offers huge advantages to anonymizing crowds over traditional facial recognition models. Traditional methods can only find a few (less than 20 or even less than 5) in a single image. Crowds of BLM protesters can number in the hundreds and thousands, and certainly around 50, in a single image. The model we use in this work has been trained on over 1.2 million people in the open-sourced research dataset, called <a href='https://www.crcv.ucf.edu/research/data-sets/ucf-qnrf/'>QNRF</a>, with crowds ranging from the few to the the thousands. False negatives are the worst error in our case.
+
+        <br>
+        <br>
+
+
+        <h3>Other amazing tools</h3>
+        We would love to showcase other parallel efforts (please propose any we have missed here!). Not only that, if this is not the tool for you, please check these tools out too:
+        <br>
+        <br>
+        - <a href='https://everestpipkin.github.io/image-scrubber/'>Image Scrubber</a>
+        <br>
+        - Censr (iOS and Android app)
+        <br>
+        - <a href='https://www.theverge.com/21281897/how-to-hide-faces-scrub-metadata-photograph-video-protest'>And more...</a>
+        <br>
+        <br>
+
+        <div>Brought to you by Stanford Machine Learning researchers <a href='http://sharonzhou.me'>Sharon Zhou</a>, Jiequan Zhang, and Krishna Patel. Advised by <a href='https://en.wikipedia.org/wiki/Andrew_Ng'>Prof. Andrew Ng</a>. &#10084;</div>
+        <br>
+        <div>
+            Please contact us at blm@cs.stanford.edu if you have any questions!
+        </div>
+        <br>
+        <div>
+            Thank you to Aurelia Augusta, Andrey Kurenkov, Adji Dieng, Jeremy Nixon, Samee Ibraheem, and Jean Betterton for their helpful advice and encouragement!
+        </div>
+
+    </div>
+
+    <script src="/static/external_lib/jquery.min.js"></script>
+    <script src="/static/js/app.js"></script>
+
+{% endblock %}

@@ -1,0 +1,370 @@
+/* CSS for app lives here */
+* {
+    margin: 0;
+    padding: 0;
+}
+
+#examples {
+    text-align: center;
+}
+
+a {
+    color: #ff0202;
+    text-decoration: none;
+}
+
+
+
+hr {
+  height: 1px;
+  margin: 50px 0;
+  background: -webkit-gradient(linear, 0 0, 100% 0, from(rgba(0, 0, 0, 0)), color-stop(0.5, #333333), to(rgba(0, 0, 0, 0)));
+  background: -webkit-linear-gradient(left, rgba(0, 0, 0, 0), #333333, rgba(0, 0, 0, 0));
+  background: -moz-linear-gradient(left, rgba(0, 0, 0, 0), #333333, rgba(0, 0, 0, 0));
+  background: -o-linear-gradient(left, rgba(0, 0, 0, 0), #333333, rgba(0, 0, 0, 0));
+  background: linear-gradient(left, rgba(0, 0, 0, 0), #333333, rgba(0, 0, 0, 0));
+  border: 0;
+}
+
+hr:after {
+  display: block;
+  content: '';
+  height: 30px;
+  background-image: -webkit-gradient(radial, 50% 0%, 0, 50% 0%, 116, color-stop(0%, #cccccc), color-stop(100%, rgba(255, 255, 255, 0)));
+  background-image: -webkit-radial-gradient(center top, farthest-side, #cccccc 0%, rgba(255, 255, 255, 0) 100%);
+  background-image: -moz-radial-gradient(center top, farthest-side, #cccccc 0%, rgba(255, 255, 255, 0) 100%);
+  background-image: -o-radial-gradient(center top, farthest-side, #cccccc 0%, rgba(255, 255, 255, 0) 100%);
+  background-image: radial-gradient(farthest-side at center top, #cccccc 0%, rgba(255, 255, 255, 0) 100%);
+}
+
+
+#banner {
+   position: absolute;
+   top: 0;
+   margin-right: 0;
+   background-color: #FF0000;
+   width: 100%;
+   height: 5em;
+
+}
+
+.headline {
+    font-size: 1.5em;
+    text-align: center;
+    color: rgba(0, 0, 0, 1.0);
+    margin-bottom: 12px;
+    margin-top: 20px;
+}
+
+body {
+    font-size: 1.15em;
+    font-weight: 200;
+    color: rgba(0, 0, 0, 0.9);
+    line-height: 1.5;
+    margin-top: 9em;
+    font-family: 'Montserrat', sans-serif;
+}
+
+header {
+    background-color: rgba(0, 0, 0, 0.9);
+    color: rgb(255, 255, 255);
+    padding: 1rem;
+}
+
+header p {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.2em;
+    font-weight: 200;
+    margin-bottom: 4rem;
+}
+
+main {
+    text-align: justify;
+    position: relative;
+    margin: 4rem 0;
+}
+
+footer {
+    background-color: rgba(0, 0, 0, 0.9);
+    color: rgb(255, 255, 255);
+    padding: 1rem 0;
+    margin-top: 4rem;
+}
+
+footer p {
+    text-align: center;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1em;
+    font-weight: 200;
+    margin: 0;
+}
+
+h1,
+h4,
+h6 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    text-align: center;
+}
+
+h1 {
+    font-size: 3.6em;
+    margin: 4rem 0 1rem 0;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 200;
+}
+
+h4 {
+    font-size: 2em;
+    margin: 3rem 0 1rem 0;
+}
+
+h6 {
+    font-size: 1.2em;
+    margin: 1rem 0;
+}
+
+h4 small {
+    font-size: 70%;
+    font-weight: 300;
+}
+
+p {
+    font-size: 1.4em;
+    margin: 1rem 0;
+}
+
+nav {
+    position: absolute;
+}
+
+nav ul {
+    margin-left: 0;
+    list-style: none;
+}
+
+nav ul li {
+    padding: .2rem 0;
+}
+
+nav ul li a {
+    font-size: 1.2em;
+    font-weight: 400;
+    font-family: 'Montserrat', sans-serif;
+    color: #2196f3;
+}
+
+pre {
+    font-family: 'Source Code Pro', monospace;
+    margin: 1rem 0;
+    padding: 1rem 1rem;
+    background: #f3f3f3;
+    font-size: .9em;
+    overflow-x: auto;
+}
+
+table code,
+p code {
+    font-family: 'Source Code Pro', monospace;
+    background: #f3f3f3;
+    font-size: .9em;
+    padding: .1rem .3rem;
+}
+
+strong {
+    font-weight: 600;
+}
+
+button {
+    margin:0 auto;
+    cursor: pointer;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    padding: 1rem 2rem;
+    border: none;
+    background-color: #ff0000;
+    text-transform: uppercase;
+    margin-top: 1em;  
+    width: 70%;
+    font-size: 1.3em;
+    color: white;
+}
+
+
+
+.button {
+    margin:0 auto;
+    cursor: pointer;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    border: none;
+    background-color: #ff0000;
+    text-transform: uppercase;
+    margin-top: 1em;  
+    width: 70%;
+    font-size: 1.3em;
+    color: white;
+    padding: 1rem 2rem;
+}
+
+
+.button:hover {
+  background: #ddd;
+}
+
+
+input {
+    background-color: transparent;
+    border: none;
+    border-radius: 0;
+    outline: none;
+    width: 100%;
+    line-height: normal;
+    font-size: 1em;
+    padding: 0;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    -webkit-box-sizing: content-box;
+    box-sizing: content-box;
+    margin: 0;
+    color: rgba(0, 0, 0, 0.72);
+    background-position: center bottom, center calc(100% - 1px);
+    background-repeat: no-repeat;
+    background-size: 0 2px, 100% 1px;
+    -webkit-transition: background 0s ease-out 0s;
+    -o-transition: background 0s ease-out 0s;
+    transition: background 0s ease-out 0s;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#2196f3), to(#2196f3)), -webkit-gradient(linear, left top, left bottom, from(#d9d9d9), to(#d9d9d9));
+    background-image: -webkit-linear-gradient(#2196f3, #2196f3), -webkit-linear-gradient(#d9d9d9, #d9d9d9);
+    background-image: -o-linear-gradient(#2196f3, #2196f3), -o-linear-gradient(#d9d9d9, #d9d9d9);
+    background-image: linear-gradient(#2196f3, #2196f3), linear-gradient(#d9d9d9, #d9d9d9);
+    height: 2.4em;
+}
+
+input:focus {
+    background-size: 100% 2px, 100% 1px;
+    outline: 0 none;
+    -webkit-transition-duration: 0.3s;
+    -o-transition-duration: 0.3s;
+    transition-duration: 0.3s;
+    border-bottom: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+.text-area {
+   /* position: relative;*/
+    margin: 14%;
+    /*margin-top: 80px;*/
+}
+
+#anonymize {
+    margin: 14%;
+    text-align: center;
+}
+
+#gallery{
+
+   text-align: center;
+
+}
+#getfiles{
+    margin:0 auto;
+    display:block;
+    -webkit-appearance: none;
+    cursor: pointer;
+    font-family: 'Montserrat', sans-serif;
+    border: none;
+    display: block;
+    font-size: 1em;
+    text-align: center;
+
+
+}
+
+
+#drop-area {
+  font-size: 25px;
+  border: 2px dashed #ccc;
+  border-radius: 20px;
+  width: 80%;
+
+  font-family: sans-serif;
+  margin: 50px auto;
+  padding: 20px;
+  text-align: center;
+  height: 14em;
+  line-height: 4em;
+  margin-bottom: -8%; 
+}
+
+#drop-area.highlight {
+  border-color: purple;
+}
+p {
+  margin-top: 0;
+}
+
+.my-form {
+  margin-bottom: 10px;
+}
+
+#gallery {
+  margin-top: 10px;
+}
+
+#gallery img {
+  height: 200px;
+  margin-bottom: 10px;
+  margin-right: 10px;
+  vertical-align: middle;
+}
+
+
+
+#fileElem {
+  display: none;
+}
+
+
+@media screen and (max-width: 786px) {
+    body {
+        font-size: 14px;
+    }
+
+    nav {
+        display: none;
+    }
+
+    .container {
+        width: 80%;
+    }
+    #drop-area {
+      font-size: 15px;
+      border: 2px dashed #ccc;
+      border-radius: 20px;
+      width: 480px;
+      width: 80%;
+
+      font-family: sans-serif;
+      margin: 50px auto;
+      padding: 20px;
+      text-align: center;
+      height: 20em;
+      line-height: 4em;
+
+    }
+}
+
+@media screen and (max-width: 500px) {
+    .container {
+        width: 90%;
+    }
+    #drop-area {
+
+      height: 20em;
+
+
+    }
+}
+</style>
