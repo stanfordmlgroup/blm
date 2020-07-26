@@ -76,7 +76,7 @@ Paper associated with this work:
 ## Running Offline
 Anonymizing images using an online service that you do not fully trust may still include some risks. As the original code provided by [stanfordmlgroup](https://github.com/stanfordmlgroup/blm) is open source this fork ads the capability to run the service locally on your own computer.
 
-### Changes to Original Source
+### Changes to Original Source
 * Remove dependency to postgresql and all google services in requirements.txt 
 * Enable service to work on computers without GPU support
 * Some code cleanup
@@ -94,4 +94,4 @@ Installation of dependencies:
 
 Run and use the server:
 1. `python -m flask run`
-2. Open the app in your browser at [http://127.0.0.1:5000/](http://127.0.0.1:5000/)
+2. Open the app in your browser at [http://127.0.0.1:5000/](http://127.0.0.1:5000/) (the valid link is printed on the command line, so please verify)
