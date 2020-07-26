@@ -3,6 +3,7 @@ import torch
 import torch.nn as nn
 import numpy as np
 import logging
+
 from utils_model import compute_boxes_and_sizes, get_upsample_output, get_box_and_dot_maps, get_boxed_img
 
 
@@ -105,11 +106,18 @@ class LSCCNN(nn.Module):
         self.conv_scale1_3 = nn.Conv2d(128, 64, kernel_size=3, padding=1)
 
         if checkpoint_path is not None:
-            self.load_state_dict(torch.load(checkpoint_path))
+            if torch.cuda.is_available():
+                self.load_state_dict(torch.load(checkpoint_path))
+            else:
+                # https://towardsdatascience.com/how-to-save-and-load-a-model-in-pytorch-with-a-complete-example-c2920e617dee
+                checkpoint = torch.load(checkpoint_path, map_location='cpu')
+                self.load_state_dict(checkpoint['state_dict'])
 
     def forward(self, x):
         mean_sub_input = x
         mean_sub_input -= self.rgb_means
+
+        logging.info("Starting forward pass ...")
 
         #################### Stage 1 ##########################
 
@@ -183,20 +191,23 @@ class LSCCNN(nn.Module):
         sub4_out_rest = self.convD_5(self.relu(
             self.convD_4(self.relu(self.convD_3(self.relu(self.convD_2(self.relu(self.convD_1(sub4_concat)))))))))
 
-        logging.info("Forward Finished")
+        logging.info("Forward pass completed")
         if self.name == "scale_4":
             return main_out_rest, sub1_out_rest, sub2_out_rest, sub4_out_rest
 
 
     def predict_single_image(self, image, emoji, nms_thresh=0.25, thickness=2, multi_colours=True):
+        # resize image
         if image.shape[0] % 16 or image.shape[1] % 16:
             image = cv2.resize(image, (image.shape[1]//16*16, image.shape[0]//16*16))
+        
         img_tensor = torch.from_numpy(image.transpose((2, 0, 1)).astype(np.float32)).unsqueeze(0)
         with torch.no_grad():
-            # out = self.forward(img_tensor.cuda())
             out = self.forward(img_tensor)
+        
         out = get_upsample_output(out, self.output_downscale)
         pred_dot_map, pred_box_map = get_box_and_dot_maps(out, nms_thresh, self.BOXES)
         img_out = get_boxed_img(image, emoji, pred_box_map, pred_box_map, pred_dot_map, self.output_downscale,
                                 self.BOXES, self.BOX_SIZE_BINS, thickness=thickness, multi_colours=multi_colours)
+        
         return pred_dot_map, pred_box_map, img_out

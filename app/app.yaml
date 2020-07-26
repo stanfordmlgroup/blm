@@ -1,7 +1,7 @@
 service: default
 runtime: python
 env: flex
-entrypoint: gunicorn -b :$PORT main:app --timeout 1000 --workers 8
+entrypoint: gunicorn -b :$PORT main:app --timeout 1000 --workers 8 --log=INFO
 
 runtime_config:
   python_version: 3
@@ -16,5 +16,5 @@ resources:
 
 env_variables:
     # The app will look for the model file at: gs://MODEL_BUCKET/MODEL_FILENAME
-    MODEL_BUCKET: blm
-    MODEL_FILENAME: qnrf_scale_4_epoch_46_weights.pth
+    ## MODEL_BUCKET: blm
+    MODEL_FILENAME: ./model/scale_4_epoch_46.pth
