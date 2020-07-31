@@ -1,4 +1,3 @@
-# from PIL import Image
 import cv2
 import torch
 import numpy as np
@@ -132,7 +131,7 @@ def get_boxed_img(image, original_emoji, h_map, w_map, gt_pred_map, prediction_d
         height = y2 - y1
         emoji  = cv2.resize(emoji, (height, width))
 
-        logging.info('Faced detected: (x/y:, {}/{}, w/h: {}/{})'.format(y1, x1, width, height))
+        logging.info('Face detected: (x/y:, {}/{}, w/h: {}/{})'.format(y1, x1, width, height))
 
         # https://gist.github.com/clungzta/b4bbb3e2aa0490b0cfcbc042184b0b4e
 

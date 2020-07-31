@@ -121,6 +121,8 @@ class LSCCNN(nn.Module):
 
         #################### Stage 1 ##########################
 
+        logging.info("Stage 1")
+        
         main_out_block1 = self.relu(self.conv1_2(self.relu(self.conv1_1(mean_sub_input))))
         main_out_pool1 = self.pool1(main_out_block1)
 
@@ -140,7 +142,10 @@ class LSCCNN(nn.Module):
             self.convA_4(self.relu(self.convA_3(self.relu(self.convA_2(self.relu(self.convA_1(main_out_block5)))))))))
         if self.name == "scale_1":
             return main_out_rest
+        
         ################## Stage 2 ############################
+
+        logging.info("Stage 2")
 
         sub1_out_conv1 = self.relu(self.conv_mid_4(self.relu(
             self.conv_middle_3(self.relu(self.conv_middle_2(self.relu(self.conv_middle_1(main_out_pool3))))))))
@@ -154,6 +159,8 @@ class LSCCNN(nn.Module):
         if self.name == "scale_2":
             return main_out_rest, sub1_out_rest
         ################# Stage 3 ############################
+
+        logging.info("Stage 3")
 
         sub2_out_conv1 = self.relu(self.conv_lowest_4(self.relu(
             self.conv_lowest_3(self.relu(self.conv_lowest_2(self.relu(self.conv_lowest_1(main_out_pool2))))))))
@@ -171,6 +178,9 @@ class LSCCNN(nn.Module):
         if self.name == "scale_3":
             return main_out_rest, sub1_out_rest, sub2_out_rest
         ################# Stage 4 ############################
+
+        logging.info("Stage 4")
+
         sub4_out_conv1 = self.relu(
             self.conv_scale1_3(self.relu(self.conv_scale1_2(self.relu(self.conv_scale1_1(main_out_pool1))))))
 
@@ -196,18 +206,37 @@ class LSCCNN(nn.Module):
             return main_out_rest, sub1_out_rest, sub2_out_rest, sub4_out_rest
 
 
+    def handle_image_size(self, image):
+        # width_new = width_orig = image.shape[1]
+        # height_new = height_orig = image.shape[0]
+        h, w, _ = image.shape
+
+        if w % 16 == 0 and h % 16 == 0:
+            return image
+
+        pad_w = 0 if w % 16 == 0 else 16 - (w % 16)
+        pad_h = 0 if h % 16 == 0 else 16 - (h % 16)
+
+        logging.info("Padding image for processing (+{}, +{}). Resulting size: ({}, {})".format(pad_w, pad_h, w + pad_w, h + pad_h))
+        image_padded = cv2.copyMakeBorder (image, 0, pad_h, 0, pad_w, cv2.BORDER_CONSTANT)
+
+        return image_padded, w, h
+    
+
     def predict_single_image(self, image, emoji, nms_thresh=0.25, thickness=2, multi_colours=True):
-        # resize image
-        if image.shape[0] % 16 or image.shape[1] % 16:
-            image = cv2.resize(image, (image.shape[1]//16*16, image.shape[0]//16*16))
-        
-        img_tensor = torch.from_numpy(image.transpose((2, 0, 1)).astype(np.float32)).unsqueeze(0)
+        # resize(pad) image for processing if necessary
+        img_in, w, h = self.handle_image_size(image)
+
+        img_tensor = torch.from_numpy(img_in.transpose((2, 0, 1)).astype(np.float32)).unsqueeze(0)
         with torch.no_grad():
             out = self.forward(img_tensor)
         
         out = get_upsample_output(out, self.output_downscale)
         pred_dot_map, pred_box_map = get_box_and_dot_maps(out, nms_thresh, self.BOXES)
-        img_out = get_boxed_img(image, emoji, pred_box_map, pred_box_map, pred_dot_map, self.output_downscale,
+        img_emoji = get_boxed_img(img_in, emoji, pred_box_map, pred_box_map, pred_dot_map, self.output_downscale,
                                 self.BOXES, self.BOX_SIZE_BINS, thickness=thickness, multi_colours=multi_colours)
+
+        # crop image to original size
+        img_out = img_emoji[0:h, 0:w]
         
         return pred_dot_map, pred_box_map, img_out

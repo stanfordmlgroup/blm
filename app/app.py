@@ -4,7 +4,7 @@ from PIL import Image
 from io import BytesIO
 
 import logging
-import numpy
+import numpy as np
 import base64
 import cv2
 
@@ -27,6 +27,7 @@ def _load_model():
     MODEL = LSCCNN(checkpoint_path=MODEL_FILENAME)
     MODEL.eval()
 
+    #### cv2.setNumThreads(0) 
     EMOJI = cv2.imread(EMOJI_FILENAME, -1)
 
     logging.info("Model loaded")
@@ -48,39 +49,35 @@ def run_inference(image):
 
     jpg_text = base64.b64encode(buf)
 
-
     return jpg_text
+
+
+def read_image(fs):
+    logging.info("Reading image file {} ...".format(fs))
+    image = Image.open(fs)
+    logging.info("Image file read: {}".format(image))
+
+    return np.array(image)
+
+
+def handle_alpha_channel(image):
+    if image.shape[2] > 3:
+        image = image[:, :, :3]
+        logging.info("Alpha channel removed")
+    
+    return image
 
 
 @app.route("/model", methods=['POST'])
 def model():
     if request.method == 'POST':
-        logging.info("Request received, loading image ...")
-        image = request.files["inputimage"]
-        image.seek(0)
-        contents = image.read()
-        image = Image.open(BytesIO(contents))
-        image = numpy.array(image) # RGB (so no need to do BGR2RGB)
-
-        # remove alpha channel from png
-        if image.shape[2] > 3:
-            image = image[:, :, :3]
-
-        # determine image size
-        img_file = BytesIO()
-        img_size_test = Image.fromarray(image.copy())
-        img_size_test.save(img_file, 'png')
-        image_file_size = img_file.tell()
-        logging.info("Image loaded, image size: " + str(image_file_size))
-
-        if image_file_size > 5000000:
-            with BytesIO() as f:
-                img_size_test.save(f, "JPEG")
-                image = f.getvalue()
-
-                image = Image.open(BytesIO(image))
-                image = numpy.array(image)
+        file_storage = request.files["inputimage"]
+        image = read_image(file_storage)
+        image = handle_alpha_channel(image)
 
         jpg_txt = run_inference(image)
 
         return jpg_txt, 200
+
+if __name__ == '__main__':
+    app.run("0.0.0.0", debug=True)

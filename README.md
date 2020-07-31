@@ -79,9 +79,10 @@ Anonymizing images using an online service that you do not fully trust may still
 ### Changes to Original Source
 * Remove dependency to postgresql and all google services in requirements.txt 
 * Enable service to work on computers without GPU support
+* Cleanup of requirements.txt
 * Some code cleanup
 
-### Steps to Run Offline
+### Steps to Run Offline (Traditional)
 
 Preparations:
 1. Clone this repository
@@ -93,5 +94,19 @@ Installation of dependencies:
 2. `pip install -r requirements.txt`
 
 Run and use the server:
-1. `python -m flask run`
+1. `python app.py`
+2. Open the app in your browser at [http://127.0.0.1:5000/](http://127.0.0.1:5000/) (the valid link is printed on the command line, so please verify)
+
+### Steps to Run Offline (Docker)
+
+Preparations:
+1. Clone this repository
+2. Download the model weights file according to the [readme.txt](https://github.com/matthiaszimmermann/blm/tree/master/app/model/readme.txt) file
+
+Build Docker image:
+1. `cd blm/app`
+2. `docker build -t blm .`
+
+Run Docker container:
+1. `docker run --rm --volume "$PWD":/app -p 5000:5000 -m 6g blm python app.py`
 2. Open the app in your browser at [http://127.0.0.1:5000/](http://127.0.0.1:5000/) (the valid link is printed on the command line, so please verify)
