@@ -72,6 +72,7 @@ Paper associated with this work:
     Year = {2020}
 }
 ```
+Paper available on [arXiv.org](https://arxiv.org/abs/1906.07538)
 
 ## Running Offline
 Anonymizing images using an online service that you do not fully trust may still include some risks. As the original code provided by [stanfordmlgroup](https://github.com/stanfordmlgroup/blm) is open source this fork ads the capability to run the service locally on your own computer.

@@ -15,7 +15,7 @@ EMOJI_FILENAME = './blm_fist.png'
 EMOJI = None
 
 app = Flask(__name__)
-
+    
 @app.before_first_request
 def _load_model():
     global MODEL
@@ -24,10 +24,10 @@ def _load_model():
     logging.basicConfig(level=logging.INFO)
     logging.info("Loading model '" + MODEL_FILENAME + "' ...")
 
-    MODEL = LSCCNN(checkpoint_path=MODEL_FILENAME)
+    MODEL = LSCCNN()
+    MODEL.load_weights(MODEL_FILENAME)
     MODEL.eval()
 
-    #### cv2.setNumThreads(0) 
     EMOJI = cv2.imread(EMOJI_FILENAME, -1)
 
     logging.info("Model loaded")

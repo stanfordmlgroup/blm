@@ -6,13 +6,12 @@ import logging
 
 from utils_model import compute_boxes_and_sizes, get_upsample_output, get_box_and_dot_maps, get_boxed_img
 
-
 class LSCCNN(nn.Module):
-    def __init__(self, name='scale_4', checkpoint_path=None, output_downscale=2,
+    def __init__(self, output_downscale=2,
                  PRED_DOWNSCALE_FACTORS=(8, 4, 2, 1), GAMMA=(1, 1, 2, 4), NUM_BOXES_PER_SCALE=3):
 
         super(LSCCNN, self).__init__()
-        self.name = name
+
         if torch.cuda.is_available():
             self.rgb_means = torch.cuda.FloatTensor([104.008, 116.669, 122.675])
         else:
@@ -105,6 +104,8 @@ class LSCCNN(nn.Module):
         self.conv_scale1_2 = nn.Conv2d(128, 128, kernel_size=3, padding=1)
         self.conv_scale1_3 = nn.Conv2d(128, 64, kernel_size=3, padding=1)
 
+
+    def load_weights(self, checkpoint_path):
         if checkpoint_path is not None:
             if torch.cuda.is_available():
                 self.load_state_dict(torch.load(checkpoint_path))
@@ -112,6 +113,8 @@ class LSCCNN(nn.Module):
                 # https://towardsdatascience.com/how-to-save-and-load-a-model-in-pytorch-with-a-complete-example-c2920e617dee
                 checkpoint = torch.load(checkpoint_path, map_location='cpu')
                 self.load_state_dict(checkpoint['state_dict'])
+        else:
+            logging.error("Empty checkpoint_path to model file provided")
 
     def forward(self, x):
         mean_sub_input = x
@@ -121,66 +124,89 @@ class LSCCNN(nn.Module):
 
         #################### Stage 1 ##########################
 
-        logging.info("Stage 1")
+        logging.info("Stage 1 (Fig 2): Feature Extractor output terminal #2 + TFM(s=0) output terminal #4")
         
+        # 2C|64 + P (mean_sub_input is input terminal #1 in fig 3)
         main_out_block1 = self.relu(self.conv1_2(self.relu(self.conv1_1(mean_sub_input))))
         main_out_pool1 = self.pool1(main_out_block1)
 
+        # 2C|128 + P
         main_out_block2 = self.relu(self.conv2_2(self.relu(self.conv2_1(main_out_pool1))))
         main_out_pool2 = self.pool2(main_out_block2)
 
+        # 3C|256 + P
         main_out_block3 = self.relu(self.conv3_3(self.relu(self.conv3_2(self.relu(self.conv3_1(main_out_pool2))))))
         main_out_pool3 = self.pool3(main_out_block3)
 
+        # 3C|512 + P
         main_out_block4 = self.relu(self.conv4_3(self.relu(self.conv4_2(self.relu(self.conv4_1(main_out_pool3))))))
-        main_out_pool4 = self.pool3(main_out_block4)
+        main_out_pool4 = self.pool4(main_out_block4)
 
+        # 3C|512 (main_out_block5 is output terminal #2 in fig 3)
         main_out_block5 = self.relu(self.conv_before_transpose_1(
             self.relu(self.conv5_3(self.relu(self.conv5_2(self.relu(self.conv5_1(main_out_pool4))))))))
 
+        # TFM(s=0) 
+        # main_out_rest is output terminal #4 in fig 4
+        # C|256 + C|128 + C|64 + C|32 + C|16 + C|4
         main_out_rest = self.convA_5(self.relu(
             self.convA_4(self.relu(self.convA_3(self.relu(self.convA_2(self.relu(self.convA_1(main_out_block5)))))))))
-        if self.name == "scale_1":
-            return main_out_rest
-        
+
         ################## Stage 2 ############################
 
-        logging.info("Stage 2")
+        logging.info("Stage 2 (Fig 2): Feature Extractor output terminal #3 + TFM(s=1) output terminal #4")
 
+        # convolution to create output terminal #2 of fig 4 for tfm(s=1)
+        # 4C|256 (seems to be a mismatch with output terminal #3 in fig3 which claims 3C|512)
         sub1_out_conv1 = self.relu(self.conv_mid_4(self.relu(
             self.conv_middle_3(self.relu(self.conv_middle_2(self.relu(self.conv_middle_1(main_out_pool3))))))))
+        
+        # TDF 1
+        # C|256 (feature extractor output terminal #2 using convolution to create tfm(s=0) 
+        # output terminal #2 in fig 4, which is input terminal #3 of fig4 for tfm(s=1))
         sub1_transpose = self.relu(self.transpose_1(main_out_block5))
         sub1_after_transpose_1 = self.relu(self.conv_after_transpose_1_1(sub1_transpose))
 
+        # concatenation of input terminals #3+1 for tfm(s=1)
         sub1_concat = torch.cat((sub1_out_conv1, sub1_after_transpose_1), dim=1)
 
+        # TFM(s=1)
+        # sub1_out_rest is output terminal #4 in fig 4
+        # C|256 + C|128 + C|64 + C|32 + C|16 + C|4
         sub1_out_rest = self.convB_5(self.relu(
             self.convB_4(self.relu(self.convB_3(self.relu(self.convB_2(self.relu(self.convB_1(sub1_concat)))))))))
-        if self.name == "scale_2":
-            return main_out_rest, sub1_out_rest
+        
         ################# Stage 3 ############################
 
-        logging.info("Stage 3")
+        logging.info("Stage 3 (Fig 2): Feature Extractor output terminal #4 + TFM(s=2) output terminal #4")
 
+        # 4C|128 (seems to be a mismatch with output terminal #4 in fig3 which claims 3C|256)
         sub2_out_conv1 = self.relu(self.conv_lowest_4(self.relu(
             self.conv_lowest_3(self.relu(self.conv_lowest_2(self.relu(self.conv_lowest_1(main_out_pool2))))))))
+        
+        # TDF 1
+        # convolution input terminal #3 from tfm(s=0) of fig 4 for tfm(s=1)
         sub2_transpose = self.relu(self.transpose_2(sub1_out_conv1))
         sub2_after_transpose_1 = self.relu(self.conv_after_transpose_2_1(sub2_transpose))
 
+        # TDF 2
+        # convolution input terminal #3 from tfm(s=0) of fig 4 for tfm(s=0)
         sub3_transpose = self.relu(self.transpose_3(main_out_block5))
         sub3_after_transpose_1 = self.relu(self.conv_after_transpose_3_1(sub3_transpose))
 
         sub2_concat = torch.cat((sub2_out_conv1, sub2_after_transpose_1, sub3_after_transpose_1), dim=1)
 
+        # TFM(s=2)
+        # sub2_out_rest is output terminal #4 in fig 4
+        # C|256 + C|128 + C|64 + C|32 + C|16 + C|4
         sub2_out_rest = self.convC_5(self.relu(
             self.convC_4(self.relu(self.convC_3(self.relu(self.convC_2(self.relu(self.convC_1(sub2_concat)))))))))
 
-        if self.name == "scale_3":
-            return main_out_rest, sub1_out_rest, sub2_out_rest
         ################# Stage 4 ############################
 
-        logging.info("Stage 4")
+        logging.info("Stage 4 (Fig 2): Feature Extractor output terminal #5 + TFM(s=3) output terminal #4")
 
+        # 3C|64 (seems to be a mismatch with output terminal #5 in fig3 which claims 3C|128)
         sub4_out_conv1 = self.relu(
             self.conv_scale1_3(self.relu(self.conv_scale1_2(self.relu(self.conv_scale1_1(main_out_pool1))))))
 
@@ -198,12 +224,16 @@ class LSCCNN(nn.Module):
         after_tdf_4_3 = self.relu(self.conv_after_transpose_4_3(tdf_4_3))
 
         sub4_concat = torch.cat((sub4_out_conv1, after_tdf_4_1, after_tdf_4_2, after_tdf_4_3), dim=1)
+
+        # TFM(s=3)
+        # sub4_out_rest is output terminal #4 in fig 4
+        # C|256 + C|128 + C|64 + C|32 + C|16 + C|4
         sub4_out_rest = self.convD_5(self.relu(
             self.convD_4(self.relu(self.convD_3(self.relu(self.convD_2(self.relu(self.convD_1(sub4_concat)))))))))
 
         logging.info("Forward pass completed")
-        if self.name == "scale_4":
-            return main_out_rest, sub1_out_rest, sub2_out_rest, sub4_out_rest
+
+        return main_out_rest, sub1_out_rest, sub2_out_rest, sub4_out_rest
 
 
     def handle_image_size(self, image):
