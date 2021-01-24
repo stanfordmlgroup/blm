@@ -73,6 +73,9 @@ Paper associated with this work:
 }
 ```
 
+### Offline mode
+See `offline` branch to run this work offline using Docker. This awesome code was contributed by [@matthiaszimmermann](https://github.com/matthiaszimmermann).
+
 
 
 
