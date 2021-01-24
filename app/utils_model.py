@@ -1,10 +1,10 @@
-from utils_nms import apply_nms
-from PIL import Image
 import cv2
 import torch
 import numpy as np
 import copy
 import logging
+
+from utils_nms import apply_nms
 
 def compute_boxes_and_sizes(PRED_DOWNSCALE_FACTORS, GAMMA, NUM_BOXES_PER_SCALE):
 
@@ -104,7 +104,6 @@ def get_boxed_img(image, original_emoji, h_map, w_map, gt_pred_map, prediction_d
     head_idx = np.where(gt_pred_map > 0)
 
     H, W = boxed_img.shape[:2]
-
     Y, X = head_idx[-2], head_idx[-1]
 
     # scale to image 
@@ -128,12 +127,11 @@ def get_boxed_img(image, original_emoji, h_map, w_map, gt_pred_map, prediction_d
         x1 = max(int((prediction_downscale * y - h / 2) - expand_h), 0)
         
         emoji = copy.deepcopy(original_emoji)
-        # emoji = original_emoji.copy()
         width = x2 - x1
         height = y2 - y1
-        emoji  = cv2.resize(emoji, (height, width))  
-        # emoji = emoji.resize((width, height))
-        # emoji = np.array(emoji)
+        emoji  = cv2.resize(emoji, (height, width))
+
+        logging.info('Face detected: (x/y:, {}/{}, w/h: {}/{})'.format(y1, x1, width, height))
 
         # https://gist.github.com/clungzta/b4bbb3e2aa0490b0cfcbc042184b0b4e
 
